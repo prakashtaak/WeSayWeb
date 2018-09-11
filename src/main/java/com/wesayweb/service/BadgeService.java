@@ -15,7 +15,7 @@ import com.wesayweb.repository.UserBadgeCountRepository;
 
 public class BadgeService {
 
-	private int badgecountforregistration = 3;
+	private static int badgecountforregistration = 3;
 
 	@Autowired
 	BadgeRespository badgeRepository;

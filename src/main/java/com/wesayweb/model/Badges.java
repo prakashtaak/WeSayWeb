@@ -2,16 +2,9 @@ package com.wesayweb.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import javax.persistence.*;
 
-import com.wesayweb.helper.WesayStringUtil;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,6 +52,12 @@ public class Badges implements Serializable {
 	final Date addeddate = new Date();
 
 	@Getter
-	final String badgeuniqueid = WesayStringUtil.generateRandomNumber();	
+	@Setter
+	@ManyToOne
+	private BadgeCategoryMaster catagory;
+	//commented for below reason
+	//We can use unique badgeId while adding badges to a user, rather then using the same id for all the user
+	/*@Getter
+	final String badgeuniqueid = WesayStringUtil.generateRandomNumber();*/
 	
 }

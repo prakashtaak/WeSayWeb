@@ -112,22 +112,63 @@ public class CsvReader {
 	public static List<Badges> getBadges() {
 		List<Badges> returnList = new ArrayList<Badges>();
 		ClassLoader classLoader = CsvReader.class.getClassLoader();
-		File file = new File(classLoader.getResource("supported_stuff/badges.csv").getFile());
+
+		List<String> badgeCategories = readBadgesCategoryData();
+		badgeCategories.forEach( x -> {
+
+			File file = new File(classLoader.getResource("supported_stuff/"+x+".csv").getFile());
+			BufferedReader br = null;
+			int linecounter = 0;
+			String line = "";
+			String cvsSplitBy = ",";
+			try {
+
+				br = new BufferedReader(new FileReader(file));
+				while ((line = br.readLine()) != null) {
+					if (linecounter > 0) {
+						Badges badgeObj = Badges.builder().build();
+						String[] rows = line.split(cvsSplitBy);
+						badgeObj.setBadgename(rows[0].trim());
+						badgeObj.setBadgeisactive(Integer.valueOf(rows[1].trim()));
+
+						returnList.add(badgeObj);
+					}
+					linecounter++;
+				}
+
+			} catch (FileNotFoundException e) {
+				log.error(e.getMessage());
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			} finally {
+				if (br != null) {
+					try {
+						br.close();
+					} catch (IOException e) {
+						log.error(e.getMessage());
+					}
+				}
+			}
+		});
+
+		return returnList;
+	}
+
+	public static List<String> readBadgesCategoryData(){
+		ClassLoader classLoader = CsvReader.class.getClassLoader();
+		File masterFile= new File(classLoader.getResource("supported_stuff/badge_master.csv").getFile());
 		BufferedReader br = null;
 		int linecounter = 0;
 		String line = "";
 		String cvsSplitBy = ",";
+		List<String> categories=new ArrayList<>();
 		try {
 
-			br = new BufferedReader(new FileReader(file));
+			br = new BufferedReader(new FileReader(masterFile));
 			while ((line = br.readLine()) != null) {
 				if (linecounter > 0) {
-					Badges badgeObj = Badges.builder().build();
 					String[] rows = line.split(cvsSplitBy);
-					badgeObj.setBadgename(rows[0].trim());
-					badgeObj.setBadgeisactive(Integer.valueOf(rows[1].trim()));
-					
-					returnList.add(badgeObj);
+					categories.add(rows[0].trim());
 				}
 				linecounter++;
 			}
@@ -145,6 +186,10 @@ public class CsvReader {
 				}
 			}
 		}
-		return returnList;
+		return categories;
+	}
+
+	public static void main(String[] args) {
+		readBadgesCategoryData();
 	}
 }
